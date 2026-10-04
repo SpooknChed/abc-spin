@@ -23,7 +23,7 @@ KEYWORDS = [
     ("Vodka", r"\bvodka\b|\bvodca\b"),
     ("Rum", r"\brum\b|\brhum\b|\bcachaca\b|\bcachaça\b|\brum\s*cream\b"),
     ("Brandy", r"\bbrandy\b|\bcognac\b|\barmagnac\b|\bcalvados\b|\bpisco\b|\bgrappa\b|\bv\.?s\.?o\.?p\b|\bx\.?o\b|\bapple\s*jack\b|\bapplejack\b"),
-    ("Whiskey", r"\bwhiske?y\b|\bbourbon\b|\brye\b|\bscotch\b|\bsingle malt\b|\bmalt\b|\btennessee\b|\bsour mash\b|\bblended\b|\bmoonshine\b|\bshine\b|\bcorn\b|\bsingle barrel\b|\bbottled in bond\b|\bbib\b|\bbtb\b|\bs\.m\.|\bfull proof\b|\bbarrel proof\b|\bcask strength\b|\bsmall batch\b|\bwheated\b|\bstraight\b|\bpot still\b|\bwsk\b"),
+    ("Whiskey", r"\bwhiske?y\b|\bbourbon\b|\brye\b|\bscotch\b|\bsingle malt\b|\bmalt\b|\btennessee\b|\bsour mash\b|\bblended\b|\bmoonshine\b|\bshine\b|\bcorn\b|\bsingle barrel\b|\bbottled in bond\b|\bbib\b|\bbtb\b|\bs\.m\.|\bfull proof\b|\bbarrel proof\b|\bcask strength\b|\bsmall batch\b|\bwheated\b|\bstraight\b|\bpot still\b|\bwsk\b|\bcanadian\b"),
 ]
 
 BRANDS = {
@@ -63,6 +63,11 @@ BRANDS = {
         "pikesville", "ri1", "ri 1", "lot 40", "pike creek", "j.p. wiser", "jp wiser", "forty creek", "seagram's vo",
         "windsor", "canadian mist", "black bush", "proper no. twelve", "fistful of bourbon", "buchanan",
         "grand old parr", "j. walker", "jw black", "dewars",
+        "ballantine", "black & white", "bowman's virginia", "isaac bowman", "caribou crossing", "classic 12",
+        "crawford's", "dickel", "duggan's dew", "georgia moon", "grant's", "highland mist", "hochstadter",
+        "i.w. harper", "iw harper", "inver house", "j & b", "johnny drum", "lismore", "lock stock & barrel",
+        "old parr", "old smuggler", "old taylor", "paddy", "rich & rare", "roe & co", "scoresby", "singleton",
+        "ten high", "travelers club", "wiser's", "bernheim", "amador", "bird dog",
     ],
     "Vodka": [
         "tito", "smirnoff", "absolut", "ketel one", "grey goose", "svedka", "deep eddy", "pinnacle",
@@ -70,10 +75,13 @@ BRANDS = {
         "western son", "kirov", "taaka", "aristocrat", "platinum 7x", "sobieski", "chopin", "luksusowa",
         "reyka", "chateau", "crystal palace", "highclere", "vladimir", "finlandia", "van gogh", "pearl",
         "effen", "crystal head", "barton vodka", "wodka", "dixie", "hangar 1", "cathead",
+        "crown russe", "nikolai", "popov", "relska", "skol", "rain cucumber", "rain mango", "rain vodka",
+        "fleischmann's royal", "gilbey's 80", "seagram's extra smooth",
     ],
     "Gin": [
         "tanqueray", "hendrick", "beefeater", "bombay", "gordon's", "gordons", "aviation", "the botanist",
         "monkey 47", "roku", "sipsmith", "plymouth", "seagram's extra dry", "seagrams extra dry",
+        "broker's", "fleischmann's dry", "gilbey's london dry", "gray whale", "violet fog", "seagram's lime",
     ],
     "Rum": [
         "bacardi", "captain morgan", "malibu", "sailor jerry", "kraken", "mount gay", "appleton",
@@ -107,6 +115,7 @@ BRANDS = {
         "irish mist", "agavero", "patron citronge", "watershed", "ole smoky salted caramel", "99 ", "twenty grand",
         "barenjager", "bärenjäger", "b & b", "domaine de canton", "giffard", "kamora", "kapali", "shanky's",
         "melone", "sarti", "arrow ", "faccia brutto", "sunshine punch", "travis hasse", "bitter tooth",
+        "mohawk butterscotch", "e m walton", "twisted shotz",
     ],
 }
 
