@@ -1,0 +1,67 @@
+name: Daily inventory scrape
+
+on:
+  schedule:
+    - cron: "17 9 * * *"   # 09:17 UTC = 5:17 AM Eastern (4:17 AM in winter)
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Test run: only search this many product codes (blank = full run)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run parser tests
+        run: python tests/test_parse.py
+
+      - name: Build zip code table (first run only)
+        run: |
+          if [ ! -f data/zips.json ]; then python scraper/zips.py; fi
+
+      - name: Scrape
+        run: |
+          if [ -n "${{ github.event.inputs.limit }}" ]; then
+            python scraper/scrape.py --limit "${{ github.event.inputs.limit }}"
+          else
+            python scraper/scrape.py
+          fi
+
+      - name: Commit data
+        run: |
+          git config user.name "abc-spin-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No data changes"
+          else
+            git commit -m "Inventory update $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+  # Pushes made with the workflow token don't trigger other workflows,
+  # so the site is redeployed here after each scrape.
+  deploy:
+    needs: scrape
+    uses: ./.github/workflows/pages.yml
