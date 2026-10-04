@@ -6,6 +6,7 @@ turn a typed zip code into a point and sort stores by distance.
 import io
 import json
 import os
+import re
 import sys
 import zipfile
 
@@ -27,22 +28,47 @@ def main():
         if r.status_code != 200:
             print(f"{y}: HTTP {r.status_code}")
             continue
-        z = zipfile.ZipFile(io.BytesIO(r.content))
-        text = z.read(z.namelist()[0]).decode("utf-8", errors="replace")
-        lines = text.splitlines()
-        hdr = [h.strip() for h in lines[0].split("\t")]
-        gi, la, lo = hdr.index("GEOID"), hdr.index("INTPTLAT"), hdr.index("INTPTLONG")
-        out = {}
-        for line in lines[1:]:
-            f = [x.strip() for x in line.split("\t")]
-            if f[gi][:2] in ("27", "28"):
-                out[f[gi]] = [round(float(f[la]), 4), round(float(f[lo]), 4)]
+        try:
+            out = parse(r.content)
+        except Exception as e:  # header layout changed, bad zip, etc.
+            print(f"{y}: could not parse gazetteer: {e}")
+            continue
         os.makedirs(os.path.dirname(OUT), exist_ok=True)
         with open(OUT, "w") as fh:
             json.dump(out, fh, separators=(",", ":"))
         print(f"zips.json: {len(out)} NC zip codes from {y} gazetteer")
         return
-    sys.exit("Could not download the Census ZCTA gazetteer")
+    # Not fatal: the site falls back to sorting stores by zip number.
+    print("WARNING: no zip table built; the site will sort stores by zip number instead")
+
+
+def parse(blob: bytes) -> dict:
+    z = zipfile.ZipFile(io.BytesIO(blob))
+    name = next(n for n in z.namelist() if n.lower().endswith((".txt", ".csv")))
+    text = z.read(name).decode("utf-8-sig", errors="replace")
+    lines = text.splitlines()
+    delim = max(["\t", "|", ","], key=lines[0].count)
+    hdr = [h.strip().strip('"').upper() for h in lines[0].split(delim)]
+
+    def col(*keys):
+        for k in keys:
+            for i, h in enumerate(hdr):
+                if k in h:
+                    return i
+        raise ValueError(f"none of {keys} in header {hdr}")
+
+    gi, la, lo = col("GEOID", "ZCTA"), col("INTPTLAT"), col("INTPTLONG", "INTPTLON")
+    out = {}
+    for line in lines[1:]:
+        f = [x.strip().strip('"') for x in line.split(delim)]
+        if len(f) <= max(gi, la, lo):
+            continue
+        z5 = re.sub(r"\D", "", f[gi])[-5:]
+        if z5[:2] in ("27", "28"):
+            out[z5] = [round(float(f[la]), 4), round(float(f[lo]), 4)]
+    if len(out) < 500:
+        raise ValueError(f"only {len(out)} NC zip codes found")
+    return out
 
 
 if __name__ == "__main__":
